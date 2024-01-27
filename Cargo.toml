@@ -1,0 +1,14 @@
+[workspace]
+members = [
+    "crates/jupiter-swap-api-client",
+    # "example",
+    "crates/cli",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+
+[workspace.dependencies]
+solana-sdk = "1.14.23"
+solana-client = "1.14.23"
