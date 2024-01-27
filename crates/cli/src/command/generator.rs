@@ -105,6 +105,21 @@ impl From<KeyPairs> for KeyPairsString {
     }
 }
 
+impl From<KeyPairsString> for KeyPairs {
+    fn from(value: KeyPairsString) -> Self {
+        let keypairs = value
+            .keypairs
+            .iter()
+            .map(|k| {
+                let raw_keypairs =
+                    serde_json::from_str::<Vec<u8>>(&k.secret).expect("serde keypairs error");
+                Keypair::from_bytes(&raw_keypairs).expect("keypairs from bytes error")
+            })
+            .collect::<Vec<_>>();
+        Self { keypairs }
+    }
+}
+
 impl KeyPairs {
     pub fn new() -> Self {
         Self { keypairs: vec![] }
