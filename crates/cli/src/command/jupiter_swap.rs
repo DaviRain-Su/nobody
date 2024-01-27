@@ -44,7 +44,7 @@ impl JupyterSwap {
         };
 
         // swap usdc(10_000_000 / 1_000_000 = 10) for sol
-        let usdc_to_sol_quote_request = QuoteRequest {
+        let _usdc_to_sol_quote_request = QuoteRequest {
             amount: 10_000_000,
             input_mint: USDC_MINT,
             output_mint: NATIVE_MINT,

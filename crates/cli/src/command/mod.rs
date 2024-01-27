@@ -1,8 +1,10 @@
 pub mod auto;
+pub mod generator;
 pub mod get_sol_balance;
 pub mod jupiter_swap;
 
 use crate::command::auto::Auto;
+use generator::Generator;
 use jupiter_swap::JupyterSwap;
 use structopt::StructOpt;
 
@@ -17,6 +19,9 @@ pub enum Command {
     /// jupyter swap
     #[structopt(name = "swap")]
     Swap(JupyterSwap),
+    /// generate new keypair
+    #[structopt(name = "generator")]
+    Generator(Generator),
 }
 
 #[derive(Debug, StructOpt)]
@@ -40,6 +45,10 @@ impl NobodyCli {
             }
             Command::Swap(swap) => {
                 swap.run().await?;
+                Ok(())
+            }
+            Command::Generator(generator) => {
+                generator.run()?;
                 Ok(())
             }
         }
