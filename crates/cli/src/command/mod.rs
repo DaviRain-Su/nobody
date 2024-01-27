@@ -20,7 +20,7 @@ pub enum Command {
 }
 
 #[derive(Debug, StructOpt)]
-#[structopt(name = "pomm")]
+#[structopt(name = "nobody-cli")]
 pub struct NobodyCli {
     #[structopt(subcommand)]
     pub command: Command,
