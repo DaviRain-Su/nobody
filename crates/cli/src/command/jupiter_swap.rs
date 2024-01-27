@@ -55,7 +55,7 @@ impl JupyterSwap {
 
         // GET /quote
         let quote_response = jupiter_swap_api_client
-            .quote(&usdc_to_sol_quote_request)
+            .quote(&sol_to_usdc_quote_request)
             .await
             .unwrap();
         log::info!("{quote_response:#?}");
