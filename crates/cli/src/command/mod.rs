@@ -1,4 +1,5 @@
 pub mod auto;
+pub mod clone;
 pub mod generator;
 pub mod get_sol_balance;
 pub mod jupiter_swap;
@@ -22,6 +23,9 @@ pub enum Command {
     /// generate new keypair
     #[structopt(name = "generator")]
     Generator(Generator),
+    ///
+    #[structopt(name = "clone")]
+    Clone(clone::Clone),
 }
 
 #[derive(Debug, StructOpt)]
@@ -49,6 +53,10 @@ impl NobodyCli {
             }
             Command::Generator(generator) => {
                 generator.run()?;
+                Ok(())
+            }
+            Command::Clone(clone) => {
+                clone.run().await?;
                 Ok(())
             }
         }

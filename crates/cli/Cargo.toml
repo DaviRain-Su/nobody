@@ -26,3 +26,5 @@ jupiter-swap-api-client = { path = "../jupiter-swap-api-client" }
 solana-sdk = { workspace = true }
 solana-client = { workspace = true }
 bincode = "1.3.3"
+tempfile = "3.9.0"
+reqwest = "0.11.23"
