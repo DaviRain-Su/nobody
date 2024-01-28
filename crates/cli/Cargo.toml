@@ -1,6 +1,8 @@
 [package]
 name = "nobody-cli"
-version = "0.1.0"
+version = "0.2.0"
+description = "nobody cli tool integrated with solana"
+license = "MIT"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -22,7 +24,7 @@ thiserror = "1.0.56"
 tokio = { version = "1.35.1", features = ["full"] }
 toml = "0.8.8"
 
-jupiter-swap-api-client = { path = "../jupiter-swap-api-client" }
+jupiter-swap-api-client = "0.1.0"
 solana-sdk = { workspace = true }
 solana-client = { workspace = true }
 bincode = "1.3.3"

@@ -2003,6 +2003,8 @@ dependencies = [
 [[package]]
 name = "jupiter-swap-api-client"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1507ed0dc0916bbebdd3e17063e180022834dce1d982a25fcb6df75411281463"
 dependencies = [
  "anyhow",
  "base64 0.13.1",
@@ -2237,7 +2239,7 @@ dependencies = [
 
 [[package]]
 name = "nobody-cli"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "arrayref",

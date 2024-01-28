@@ -1,7 +1,8 @@
 [package]
 name = "jupiter-swap-api-client"
 version = "0.1.0"
-description = ""
+description = "jupiter-swap-api-client for interacting with the Jupiter Swap API"
+license = "MIT"
 edition = { workspace = true }
 
 [dependencies]

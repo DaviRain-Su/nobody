@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "crates/jupiter-swap-api-client",
+    # "crates/jupiter-swap-api-client",
     "crates/cli",
 ]
 resolver = "2"
