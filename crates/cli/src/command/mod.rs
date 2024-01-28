@@ -8,7 +8,7 @@ pub mod raydium;
 
 use crate::command::auto::Auto;
 use generator::Generator;
-use jupiter_swap::JupyterSwap;
+use jupiter_swap::Jupyter;
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
@@ -20,8 +20,8 @@ pub enum Command {
     #[structopt(name = "get-balance")]
     GetBalance(get_sol_balance::GetBalance),
     /// jupyter swap
-    #[structopt(name = "swap")]
-    Swap(JupyterSwap),
+    #[structopt(name = "jupyter")]
+    Jupyter(Jupyter),
     /// generate new keypair
     #[structopt(name = "generator")]
     Generator(Generator),
@@ -55,7 +55,7 @@ impl NobodyCli {
                 get_balance.run().await?;
                 Ok(())
             }
-            Command::Swap(swap) => {
+            Command::Jupyter(swap) => {
                 swap.run().await?;
                 Ok(())
             }
