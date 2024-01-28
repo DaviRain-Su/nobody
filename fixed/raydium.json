@@ -1,0 +1,31 @@
+[
+  {
+    "name": "SOL-unknown",
+    "ammId": "ZznXNzhaEwsnjjwnjsRQCVmjv65w1iaoq9V7qmkF89U",
+    "lpMint": "4jH6UCuTHi31TgF9NUp6tdsGGob573TmgavDNPwejh9U",
+    "baseMint": "So11111111111111111111111111111111111111112",
+    "quoteMint": "HVPrjx4VH2W3ummNhXEZ2aJwF7T2sBMewPG5rrxjUoKA",
+    "market": "7MxCcVMwFGULT1uChVtKxM26a8zzz7bNquiGvH4QXprK",
+    "liquidity": 0.013848556831369627,
+    "volume24h": 0,
+    "volume24hQuote": 0,
+    "fee24h": 0,
+    "fee24hQuote": 0,
+    "volume7d": 152.58856294089478,
+    "volume7dQuote": 8625988.276625225,
+    "fee7d": 0.3356948384699685,
+    "fee7dQuote": 18977.174208575496,
+    "volume30d": 152.58856294089478,
+    "volume30dQuote": 8625988.276625225,
+    "fee30d": 0.3356948384699685,
+    "fee30dQuote": 18977.174208575496,
+    "price": 190202764.5045636,
+    "lpPrice": 0.013848556831369627,
+    "tokenAmountCoin": 0.000073626,
+    "tokenAmountPc": 14003.868739413,
+    "tokenAmountLp": 1,
+    "apr24h": 0,
+    "apr7d": 589045.74,
+    "apr30d": 589045.74
+  }
+]

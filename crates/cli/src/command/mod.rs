@@ -1,8 +1,10 @@
 pub mod auto;
 pub mod clone;
+pub mod demo;
 pub mod generator;
 pub mod get_sol_balance;
 pub mod jupiter_swap;
+pub mod raydium;
 
 use crate::command::auto::Auto;
 use generator::Generator;
@@ -23,9 +25,15 @@ pub enum Command {
     /// generate new keypair
     #[structopt(name = "generator")]
     Generator(Generator),
-    ///
+    /// clone token list csv
     #[structopt(name = "clone")]
     Clone(clone::Clone),
+    /// demo rpc
+    #[structopt(name = "demo")]
+    Demo(demo::Demo),
+    /// raydium
+    #[structopt(name = "raydium")]
+    Raydium(raydium::Raydium),
 }
 
 #[derive(Debug, StructOpt)]
@@ -57,6 +65,14 @@ impl NobodyCli {
             }
             Command::Clone(clone) => {
                 clone.run().await?;
+                Ok(())
+            }
+            Command::Demo(demo) => {
+                demo.run().await?;
+                Ok(())
+            }
+            Command::Raydium(raydium) => {
+                raydium.run().await?;
                 Ok(())
             }
         }

@@ -2193,6 +2193,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "bincode",
+ "chrono",
  "colored",
  "dirs",
  "env_logger 0.11.1",
@@ -2210,6 +2211,7 @@ dependencies = [
  "structopt",
  "tempfile",
  "thiserror",
+ "time",
  "tokio",
  "toml 0.8.8",
 ]

@@ -8,3 +8,6 @@ rpc_endpoint = "https://api.mainnet-beta.solana.com"
 # Optionally include a commitment level. Defaults to your Solana CLI config file.
 commitment = "confirmed"
 "#;
+
+// raydium
+pub const RAYDIUM_API_PAIRS: &str = "https://api.raydium.io/v2/main/pairs";
