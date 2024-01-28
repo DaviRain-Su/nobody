@@ -1,3 +1,5 @@
+use crate::command::jupiter_swap::token_list::TokenListType;
+use crate::command::jupiter_swap::token_list::Tokens;
 use crate::errors::Error;
 use crate::utils::get_config;
 use jupiter_swap_api_client::{
@@ -5,27 +7,22 @@ use jupiter_swap_api_client::{
     JupiterSwapApiClient,
 };
 use solana_client::nonblocking::rpc_client::RpcClient;
-use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signer::Signer;
-use solana_sdk::{pubkey, transaction::VersionedTransaction};
+use solana_sdk::transaction::VersionedTransaction;
 use std::env;
 use structopt::StructOpt;
 
-// usdc
-const USDC_MINT: Pubkey = pubkey!("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
-// sol
-const NATIVE_MINT: Pubkey = pubkey!("So11111111111111111111111111111111111111112");
-
-// pub const TEST_WALLET: Pubkey = pubkey!("2AQdpHJ2JpcEgPiATUXjQxA8QmafFegfQwSLWSprPicm"); // Coinbase 2 wallet
-
 #[derive(Debug, StructOpt)]
 pub struct JupyterSwap {
-    #[structopt(long)]
-    pub input_token: String,
-    #[structopt(long)]
-    pub output_token: String,
-    #[structopt(long)]
-    pub input_amount: u64,
+    /// input token name want to swap
+    pub input_token_name: String,
+    /// output token name want to swap
+    pub output_token_name: String,
+    /// input token amount
+    pub input_amount: f64,
+    /// slippage bps
+    #[structopt(long, default_value = "50")]
+    pub slippage_bps: u16,
 }
 
 impl JupyterSwap {
@@ -35,36 +32,37 @@ impl JupyterSwap {
             let location = std::panic::Location::caller();
             Error::from(format!("Error({}): {})", location, e.to_string()))
         })?;
-
+        let tokens = get_token_lists().map_err(|e| Error::from(e.to_string()))?;
+        log::info!("tokens Len: {}", tokens.len());
+        let input_token = tokens.address(&self.input_token_name).map_err(|e| {
+            let location = std::panic::Location::caller();
+            Error::from(format!("Error({}): {})", location, e.to_string()))
+        })?;
+        let output_token = tokens.address(&self.output_token_name).map_err(|e| {
+            let location = std::panic::Location::caller();
+            Error::from(format!("Error({}): {})", location, e.to_string()))
+        })?;
+        let input_decimals = tokens.decimals(&self.input_token_name).map_err(|e| {
+            let location = std::panic::Location::caller();
+            Error::from(format!("Error({}): {})", location, e.to_string()))
+        })?;
+        let input_amount = (self.input_amount * 10f64.powi(input_decimals as i32)) as u64;
         let api_base_url = env::var("API_BASE_URL").unwrap_or("https://quote-api.jup.ag/v6".into());
         log::info!("Using base url: {}", api_base_url);
 
         let jupiter_swap_api_client = JupiterSwapApiClient::new(api_base_url);
 
-        // swap sol(100_000_000/1_000_000_000 = 0.1) for usdc
-        let sol_to_usdc_quote_request = QuoteRequest {
-            amount: 10_000_000,
-            input_mint: NATIVE_MINT,
-            output_mint: USDC_MINT,
-            slippage_bps: 50,
+        let quote_request = QuoteRequest {
+            amount: input_amount,
+            input_mint: input_token,
+            output_mint: output_token,
+            slippage_bps: self.slippage_bps,
             ..QuoteRequest::default()
         };
-
-        // swap usdc(10_000_000 / 1_000_000 = 10) for sol
-        let _usdc_to_sol_quote_request = QuoteRequest {
-            amount: 10_000_000,
-            input_mint: USDC_MINT,
-            output_mint: NATIVE_MINT,
-            slippage_bps: 50,
-            ..QuoteRequest::default()
-        };
-        log::info!("{:#?}", sol_to_usdc_quote_request);
+        log::info!("{:#?}", quote_request);
 
         // GET /quote
-        let quote_response = jupiter_swap_api_client
-            .quote(&sol_to_usdc_quote_request)
-            .await
-            .unwrap();
+        let quote_response = jupiter_swap_api_client.quote(&quote_request).await.unwrap();
         log::info!("{quote_response:#?}");
 
         // POST /swap
@@ -99,11 +97,49 @@ impl JupyterSwap {
         // 4. send the transaction
         // 5. check the balance
         // 6. check the transaction history
-        let error = rpc_client
+        let signature = rpc_client
             .send_and_confirm_transaction(&signed_versioned_transaction)
             .await;
-        println!("{error:?}");
+        println!("🎉🎉🎉🎉{signature:?}🎉🎉🎉");
 
         Ok(())
     }
+}
+
+pub fn get_token_lists() -> Result<Tokens, Error> {
+    let current_dir = std::env::current_dir().map_err(|e| {
+        let location = std::panic::Location::caller();
+        Error::from(format!("Error({}): {})", location, e.to_string()))
+    })?;
+    log::info!("current_dir: {:?}", current_dir);
+    let read_file_path = current_dir.join("token_list/solana-fm.csv");
+    log::info!("read_file solana-fm.csv PATH {:?}", read_file_path);
+
+    let mut token_list = vec![];
+    let mut rdr = csv::Reader::from_path(read_file_path).map_err(|e| {
+        let location = std::panic::Location::caller();
+        Error::from(format!("Error({}): {})", location, e.to_string()))
+    })?;
+    for result in rdr.deserialize() {
+        // Notice that we need to provide a type hint for automatic
+        // deserialization.
+        let record: TokenListType = result.map_err(|e| {
+            let location = std::panic::Location::caller();
+            Error::from(format!("Error({}): {})", location, e.to_string()))
+        })?;
+        token_list.push(record);
+    }
+    let tokens = token_list
+        .into_iter()
+        .filter(|t| !t.name.is_empty())
+        .collect::<Vec<_>>();
+
+    let tokens = Tokens::from_tokens(tokens);
+    Ok(tokens)
+}
+
+#[test]
+fn test_get_token_lists() {
+    let tokens = get_token_lists();
+    assert!(tokens.is_ok())
 }

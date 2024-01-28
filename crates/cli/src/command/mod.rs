@@ -17,7 +17,7 @@ pub enum Command {
     #[structopt(name = "auto")]
     Auto(Auto),
     /// get balance
-    #[structopt(name = "get-balance")]
+    #[structopt(name = "balance")]
     GetBalance(get_sol_balance::GetBalance),
     /// jupyter swap
     #[structopt(name = "jupyter")]

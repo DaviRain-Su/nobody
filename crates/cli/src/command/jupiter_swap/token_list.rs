@@ -1,5 +1,7 @@
 use colored::*;
+use solana_sdk::pubkey::Pubkey;
 use std::fmt::Display;
+use std::str::FromStr;
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
@@ -36,6 +38,36 @@ impl Tokens {
     pub fn from_tokens(tokens: Vec<TokenListType>) -> Self {
         Self { tokens }
     }
+
+    pub fn address(&self, token_symbol: &str) -> anyhow::Result<Pubkey> {
+        log::info!("token_name: {}", token_symbol);
+        let address = self
+            .tokens
+            .iter()
+            .find(|t| {
+                log::info!("t.name: {}", t.name);
+                t.symbol.to_lowercase() == token_symbol.to_lowercase()
+            })
+            .map(|t| &t.address)
+            .ok_or(anyhow::anyhow!("token not found"))?;
+
+        Pubkey::from_str(&address).map_err(|e| anyhow::anyhow!(e))
+    }
+
+    pub fn decimals(&self, token_symbol: &str) -> anyhow::Result<u64> {
+        let decimals = self
+            .tokens
+            .iter()
+            .find(|t| t.symbol.to_lowercase() == token_symbol.to_lowercase())
+            .map(|t| &t.decimals)
+            .ok_or(anyhow::anyhow!("token not found"))?;
+
+        Ok(*decimals)
+    }
+
+    pub fn len(&self) -> usize {
+        self.tokens.len()
+    }
 }
 
 impl Display for Tokens {
@@ -49,7 +81,7 @@ impl Display for Tokens {
 
 impl TokenList {
     pub async fn run(&self) -> anyhow::Result<()> {
-        let current_dir = std::env::current_dir().unwrap();
+        let current_dir = std::env::current_dir()?;
         log::info!("current_dir: {:?}", current_dir);
         let read_file_path = current_dir.join("token_list/solana-fm.csv");
         log::info!("read_file solana-fm.csv PATH {:?}", read_file_path);
