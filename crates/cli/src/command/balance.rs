@@ -7,9 +7,13 @@ use solana_sdk::signature::Signer;
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
-pub struct GetBalance {}
+pub struct Balance {
+    /// keypair file name
+    #[structopt(short, long)]
+    pub file_name: String,
+}
 
-impl GetBalance {
+impl Balance {
     pub async fn run(&self) -> anyhow::Result<()> {
         let config = get_config().map_err(|e| Error::from(e.to_string()))?;
         let (commitment, payer, rpc_enpoint) = config.read_global_config().map_err(|e| {
@@ -25,7 +29,7 @@ impl GetBalance {
             balance as f64 / LAMPORT
         );
 
-        let keypairs = get_all_keypairs()?;
+        let keypairs = get_all_keypairs(&self.file_name)?;
         for keypair in keypairs.keypairs {
             let balance = rpc_client.get_balance(&keypair.pubkey()).await?;
             log::info!("{} Balance: {}", keypair.pubkey(), balance as f64 / LAMPORT);

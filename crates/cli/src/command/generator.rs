@@ -8,17 +8,17 @@ use structopt::StructOpt;
 #[derive(Debug, StructOpt)]
 pub struct Generator {
     /// generator wallet numbers
-    #[structopt(name = "size", short, long)]
-    pub size: usize,
-    ///
     #[structopt(short, long)]
-    pub config_path: Option<PathBuf>,
+    pub wallet_num: usize,
+    /// keypair file name
+    #[structopt(short, long)]
+    pub file_name: String,
 }
 
 impl Generator {
     pub fn run(&self) -> anyhow::Result<()> {
         let keypairs = KeyPairs::from_keypairs(
-            (0..self.size)
+            (0..self.wallet_num)
                 .map(|_i| Keypair::new())
                 .collect::<Vec<Keypair>>(),
         );
@@ -35,7 +35,7 @@ impl Generator {
 
         let home_path = dirs::home_dir().ok_or(Error::Custom("can't open home dir".into()))?;
         let nobody_config_path = home_path.join(".config").join("nobody");
-        let keypairs_path = nobody_config_path.join("keypairs.json");
+        let keypairs_path = nobody_config_path.join(format!("{}_keypairs.json", self.file_name));
         keypairs_str.write(keypairs_path.clone())?;
 
         Ok(())

@@ -1,8 +1,8 @@
 pub mod auto;
+pub mod balance;
 pub mod clone;
 pub mod demo;
 pub mod generator;
-pub mod get_sol_balance;
 pub mod jupiter_swap;
 pub mod raydium;
 
@@ -18,7 +18,7 @@ pub enum Command {
     Auto(Auto),
     /// get balance
     #[structopt(name = "balance")]
-    GetBalance(get_sol_balance::GetBalance),
+    Balance(balance::Balance),
     /// jupyter swap
     #[structopt(name = "jupyter")]
     Jupyter(Jupyter),
@@ -51,8 +51,8 @@ impl NobodyCli {
                 println!("ConfigPath: {:?}", config_path);
                 Ok(())
             }
-            Command::GetBalance(get_balance) => {
-                get_balance.run().await?;
+            Command::Balance(balance) => {
+                balance.run().await?;
                 Ok(())
             }
             Command::Jupyter(swap) => {
