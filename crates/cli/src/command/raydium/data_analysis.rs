@@ -3,9 +3,9 @@ use crate::errors::Error;
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
-pub struct Display {}
+pub struct DataAnalysis {}
 
-impl Display {
+impl DataAnalysis {
     pub async fn run(&self) -> Result<(), Error> {
         let current_dir = std::env::current_dir().unwrap();
         println!("current_dir: {:?}", current_dir);
@@ -29,12 +29,13 @@ impl Display {
         // take top 10
         pairs.reverse();
         pairs.truncate(10);
-        let raydium_pairs = RaydiumPairs::from_vec(pairs);
+        let raydium_pairs = RaydiumPairs::from_vec(pairs.clone());
         println!(
-            "raydium_pairs: {:#?} len: {}",
+            "raydium_pairs: {} len: {}",
             raydium_pairs,
             raydium_pairs.len()
         );
+
         Ok(())
     }
 }

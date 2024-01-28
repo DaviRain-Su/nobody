@@ -69,7 +69,7 @@ impl Display for RaydiumPair {
         writeln!(f, "fee30d: {:?}", self.fee30d)?;
         // writeln!(f, "fee30d_quote: {:?}", self.fee30d_quote)?;
         writeln!(f, "price: {:?}", self.price)?;
-        // writeln!(f, "lp_price: {:?}", self.lp_price)?;
+        writeln!(f, "lp_price: {:?}", self.lp_price)?;
         // writeln!(f, "token_amount_coin: {:?}", self.token_amount_coin)?;
         // writeln!(f, "token_amount_pc: {:?}", self.token_amount_pc)?;
         // writeln!(f, "token_amount_lp: {:?}", self.token_amount_lp)?;
