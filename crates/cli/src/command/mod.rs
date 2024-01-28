@@ -5,6 +5,7 @@ pub mod demo;
 pub mod generator;
 pub mod jupiter_swap;
 pub mod raydium;
+pub mod transfer;
 
 use crate::command::auto::Auto;
 use generator::Generator;
@@ -34,6 +35,9 @@ pub enum Command {
     /// raydium
     #[structopt(name = "raydium")]
     Raydium(raydium::Raydium),
+    /// transfer
+    #[structopt(name = "transfer")]
+    Transfer(transfer::Transfer),
 }
 
 #[derive(Debug, StructOpt)]
