@@ -79,6 +79,10 @@ impl NobodyCli {
                 raydium.run().await?;
                 Ok(())
             }
+            Command::Transfer(transfer) => {
+                transfer.run().await?;
+                Ok(())
+            }
         }
     }
 }

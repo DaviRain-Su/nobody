@@ -1,4 +1,4 @@
-pub const LAMPORT: f64 = 1_000_000_000.0;
+pub const LAMPORT: u64 = 1_000_000_000;
 
 pub const DEFAULT_CONFIG_FILE: &str = r#"
 # Optionally include your keypair path. Defaults to your Solana CLI config file.
