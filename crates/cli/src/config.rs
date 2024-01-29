@@ -5,6 +5,7 @@ use solana_sdk::commitment_config::CommitmentConfig;
 use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signature::read_keypair_file;
 use solana_sdk::signature::Keypair;
+use solana_sdk::signer::Signer;
 use std::str::FromStr;
 
 /// This is what we're going to decode into. Each field is optional, meaning
@@ -43,9 +44,9 @@ impl Config {
         let network_url = get_network(&rpc_enpoint).to_string();
 
         log::info!(
-            "Commitment: {:?}, Payer: {:?}, Network URL: {}",
+            "Commitment: {:?}, Payer: {}, Network URL: {}",
             commitment,
-            payer,
+            payer.pubkey(),
             network_url
         );
         Ok((commitment, payer, network_url))
@@ -71,7 +72,6 @@ pub fn get_network(network_str: &str) -> &str {
 
 pub fn get_payer_keypair_from_path(path: &str) -> Result<Keypair, Error> {
     let path = &*shellexpand::tilde(path);
-    log::info!("get_payer_keypair_from_path : Path({})", path);
     read_keypair_file(path)
         .map_err(|e| Error::ReadKeypairFailed(format!("Failed to read keypair file: {:?}", e)))
 }
