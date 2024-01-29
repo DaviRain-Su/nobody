@@ -2266,6 +2266,7 @@ dependencies = [
  "solana-cli-config",
  "solana-client",
  "solana-sdk",
+ "spl-associated-token-account",
  "structopt",
  "tempfile",
  "thiserror",

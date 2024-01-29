@@ -44,10 +44,7 @@ impl Tokens {
         let address = self
             .tokens
             .iter()
-            .find(|t| {
-                log::info!("t.name: {}", t.name);
-                t.symbol.to_lowercase() == token_symbol.to_lowercase()
-            })
+            .find(|t| t.symbol.to_lowercase() == token_symbol.to_lowercase())
             .map(|t| &t.address)
             .ok_or(anyhow::anyhow!("token not found"))?;
 
@@ -63,6 +60,17 @@ impl Tokens {
             .ok_or(anyhow::anyhow!("token not found"))?;
 
         Ok(*decimals)
+    }
+
+    pub fn name(&self, mint_token_addr: &Pubkey) -> anyhow::Result<String> {
+        let name = self
+            .tokens
+            .iter()
+            .find(|t| t.address == mint_token_addr.to_string())
+            .map(|t| t.name.clone())
+            .ok_or(anyhow::anyhow!("token not found"))?;
+
+        Ok(name)
     }
 
     pub fn len(&self) -> usize {
