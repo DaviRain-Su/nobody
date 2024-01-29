@@ -50,7 +50,7 @@ impl JupyterSwap {
             &payer.pubkey(),
             &input_token,
         );
-        let balance = rpc_client
+        let input_token_balance = rpc_client
             .get_token_account_balance(&input_token_ata)
             .await
             .map_err(|e| {
@@ -61,7 +61,16 @@ impl JupyterSwap {
             "Token({}) Address({}) Decimals({})",
             input_token_name,
             input_token,
-            balance.decimals
+            input_token_balance.decimals
+        );
+        println!(
+            "Address({}) have {} {}💰",
+            payer.pubkey(),
+            input_token_name,
+            input_token_balance.amount.parse::<f64>().map_err(|e| {
+                let location = std::panic::Location::caller();
+                Error::from(format!("Error({}): {})", location, e.to_string()))
+            })? / 10f64.powi(input_token_balance.decimals as i32)
         );
 
         let output_token = tokens.address(&self.output_token_name).map_err(|e| {
@@ -74,11 +83,8 @@ impl JupyterSwap {
         })?;
         log::info!("Token({}) Address({})", output_token_name, output_token);
 
-        let input_decimals = tokens.decimals(&self.input_token_name).map_err(|e| {
-            let location = std::panic::Location::caller();
-            Error::from(format!("Error({}): {})", location, e.to_string()))
-        })?;
-        let input_amount = (self.input_amount * 10f64.powi(input_decimals as i32)) as u64;
+        let input_amount =
+            (self.input_amount * 10f64.powi(input_token_balance.decimals as i32)) as u64;
         let api_base_url = env::var("API_BASE_URL").unwrap_or("https://quote-api.jup.ag/v6".into());
 
         let jupiter_swap_api_client = JupiterSwapApiClient::new(api_base_url);
@@ -129,6 +135,34 @@ impl JupyterSwap {
             .send_and_confirm_transaction(&signed_versioned_transaction)
             .await;
         println!("🎉🎉🎉🎉{signature:?}🎉🎉🎉");
+
+        let output_token_name = tokens
+            .name(&output_token)
+            .unwrap_or(output_token.to_string());
+        let output_token_ata = spl_associated_token_account::get_associated_token_address(
+            &payer.pubkey(),
+            &output_token,
+        );
+        let output_token_balance = rpc_client
+            .get_token_account_balance(&output_token_ata)
+            .await
+            .map_err(|e| {
+                let location = std::panic::Location::caller();
+                Error::from(format!("Error({}): {})", location, e.to_string()))
+            })?;
+        println!(
+            "Token({}) Address({}) Decimals({})",
+            output_token_name, input_token, output_token_balance.decimals
+        );
+        println!(
+            "Address({}) have {} {}💰",
+            payer.pubkey(),
+            output_token_name,
+            output_token_balance.amount.parse::<f64>().map_err(|e| {
+                let location = std::panic::Location::caller();
+                Error::from(format!("Error({}): {})", location, e.to_string()))
+            })? / 10f64.powi(output_token_balance.decimals as i32)
+        );
 
         Ok(())
     }
