@@ -1,5 +1,6 @@
 pub mod auto;
 pub mod balance;
+pub mod blocks;
 pub mod clone;
 pub mod demo;
 pub mod generator;
@@ -38,6 +39,9 @@ pub enum Command {
     /// transfer
     #[structopt(name = "transfer")]
     Transfer(transfer::Transfer),
+    /// blocks
+    #[structopt(name = "blocks")]
+    Blocks(blocks::Blocks),
 }
 
 #[derive(Debug, StructOpt)]
@@ -81,6 +85,10 @@ impl NobodyCli {
             }
             Command::Transfer(transfer) => {
                 transfer.run().await?;
+                Ok(())
+            }
+            Command::Blocks(blocks) => {
+                blocks.run().await?;
                 Ok(())
             }
         }
