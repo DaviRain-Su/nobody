@@ -1,3 +1,5 @@
+use std::thread::sleep;
+
 use crate::command::solana_rpc::NobodyClient;
 use crate::errors::Error;
 use crate::utils::get_config;
@@ -18,14 +20,25 @@ impl Blocks {
         let rpc_client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
 
         let nobody_client = NobodyClient::new(&rpc_enpoint);
+        let mut slots = rpc_client
+            .get_slot_with_commitment(CommitmentConfig::finalized())
+            .await?;
 
         loop {
-            let slots = rpc_client
-                .get_slot_with_commitment(CommitmentConfig::finalized())
-                .await?;
-            log::info!("slots: {:?}", slots);
-            let block = nobody_client.get_block(slots).await?;
-            log::info!("block: {:?}", block);
+            if let Ok(block) = nobody_client.get_block(slots).await {
+                block.find_new_token();
+                slots += 1;
+                log::info!("slots: {:?}", slots);
+                sleep(std::time::Duration::from_secs(1));
+            } else {
+                if let Ok(resut) = nobody_client.check_block(slots).await {
+                    log::info!("check block: {:?}", resut);
+                    sleep(std::time::Duration::from_secs(1));
+                } else {
+                    log::info!("parse failed");
+                    sleep(std::time::Duration::from_secs(1));
+                }
+            }
         }
     }
 }

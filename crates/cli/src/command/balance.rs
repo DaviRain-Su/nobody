@@ -23,12 +23,12 @@ impl Balance {
         let rpc_client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
         let balance = rpc_client.get_balance(&payer.pubkey()).await?;
         log::info!(
-            "{} Balance: {}",
+            "{} Balance: {} SOL",
             payer.pubkey(),
             balance as f64 / LAMPORT as f64
         );
         println!(
-            "{} Balance: {}",
+            "{} Balance: {} SOL",
             payer.pubkey().to_string().red(),
             balance as f64 / LAMPORT as f64
         );
@@ -37,12 +37,12 @@ impl Balance {
         for keypair in keypairs.keypairs {
             let balance = rpc_client.get_balance(&keypair.pubkey()).await?;
             log::info!(
-                "{} Balance: {}",
+                "{} Balance: {} SOl",
                 keypair.pubkey(),
                 balance as f64 / LAMPORT as f64
             );
             println!(
-                "{} Balance: {}",
+                "{} Balance: {} SOL",
                 keypair.pubkey().to_string().red(),
                 balance as f64 / LAMPORT as f64
             );

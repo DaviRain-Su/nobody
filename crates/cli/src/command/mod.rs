@@ -44,7 +44,7 @@ pub enum Command {
     /// blocks
     #[structopt(name = "blocks")]
     Blocks(blocks::Blocks),
-    /// print
+    /// display config: Commitment, Keypair sercret key, RpcEndpoint
     #[structopt(name = "print")]
     Print(print::Print),
 }
