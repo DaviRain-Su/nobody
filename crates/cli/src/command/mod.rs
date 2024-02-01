@@ -5,7 +5,9 @@ pub mod clone;
 pub mod demo;
 pub mod generator;
 pub mod jupiter_swap;
+pub mod print;
 pub mod raydium;
+pub mod solana_rpc;
 pub mod transfer;
 
 use crate::command::auto::Auto;
@@ -42,6 +44,9 @@ pub enum Command {
     /// blocks
     #[structopt(name = "blocks")]
     Blocks(blocks::Blocks),
+    /// print
+    #[structopt(name = "print")]
+    Print(print::Print),
 }
 
 #[derive(Debug, StructOpt)]
@@ -89,6 +94,10 @@ impl NobodyCli {
             }
             Command::Blocks(blocks) => {
                 blocks.run().await?;
+                Ok(())
+            }
+            Command::Print(print) => {
+                print.run().await?;
                 Ok(())
             }
         }

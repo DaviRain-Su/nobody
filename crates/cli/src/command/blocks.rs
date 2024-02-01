@@ -1,3 +1,4 @@
+use crate::command::solana_rpc::NobodyClient;
 use crate::errors::Error;
 use crate::utils::get_config;
 use solana_client::nonblocking::rpc_client::RpcClient;
@@ -16,17 +17,15 @@ impl Blocks {
         })?;
         let rpc_client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
 
+        let nobody_client = NobodyClient::new(&rpc_enpoint);
+
         loop {
             let slots = rpc_client
                 .get_slot_with_commitment(CommitmentConfig::finalized())
                 .await?;
             log::info!("slots: {:?}", slots);
-            // 245283357
-            // let block = rpc_client.get_block(226067836).await?;
-            // log::info!("slots: {:?}", slots);
-            let block = rpc_client.get_block(slots).await?;
+            let block = nobody_client.get_block(slots).await?;
             log::info!("block: {:?}", block);
         }
-        // Ok(())
     }
 }
