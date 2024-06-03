@@ -59,30 +59,18 @@ pub struct Item {
 }
 
 impl KeyPairsString {
-    pub fn write(&self, path: PathBuf) -> anyhow::Result<()> {
-        let temp_keypairs_str = serde_json::to_string(&self)?;
-        std::fs::write(path, temp_keypairs_str).map_err(|e| {
-            Error::from(format!(
-                "failed write keypairs_path: Error({})",
-                e.to_string()
-            ))
-        })?;
+    pub fn write(&self, path: PathBuf) -> Result<(), Error> {
+        let temp_keypairs_str =
+            serde_json::to_string(&self).map_err(|e| Error::SerializeFailed(e.to_string()))?;
+        std::fs::write(path, temp_keypairs_str)
+            .map_err(|e| Error::WriteFileFailed(e.to_string()))?;
         Ok(())
     }
 
-    pub fn read(path: PathBuf) -> anyhow::Result<Self> {
-        let temp_keypairs_str = std::fs::read_to_string(path).map_err(|e| {
-            Error::from(format!(
-                "failed read keypairs_path: Error({})",
-                e.to_string()
-            ))
-        })?;
-        let keypairs_str = serde_json::from_str(&temp_keypairs_str).map_err(|e| {
-            Error::from(format!(
-                "failed deserialze keypairs_path: Error({})",
-                e.to_string()
-            ))
-        })?;
+    pub fn read(path: PathBuf) -> Result<Self, Error> {
+        let temp_keypairs_str = std::fs::read_to_string(path).map_err(Error::ReadFileFailed)?;
+        let keypairs_str =
+            serde_json::from_str(&temp_keypairs_str).map_err(Error::DeserializeFailed)?;
         Ok(keypairs_str)
     }
 }
