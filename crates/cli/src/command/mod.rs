@@ -1,8 +1,6 @@
 pub mod auto;
 pub mod balance;
-pub mod blocks;
 pub mod clone;
-pub mod demo;
 pub mod generator;
 pub mod jupiter_swap;
 pub mod print;
@@ -32,18 +30,12 @@ pub enum Command {
     /// clone token list csv
     #[structopt(name = "clone")]
     Clone(clone::Clone),
-    /// demo rpc
-    #[structopt(name = "demo")]
-    Demo(demo::Demo),
     /// raydium
     #[structopt(name = "raydium")]
     Raydium(raydium::Raydium),
     /// transfer
     #[structopt(name = "transfer")]
     Transfer(transfer::Transfer),
-    /// blocks
-    #[structopt(name = "blocks")]
-    Blocks(blocks::Blocks),
     /// display config: Commitment, Keypair sercret key, RpcEndpoint
     #[structopt(name = "print")]
     Print(print::Print),
@@ -80,20 +72,12 @@ impl NobodyCli {
                 clone.run().await?;
                 Ok(())
             }
-            Command::Demo(demo) => {
-                demo.run().await?;
-                Ok(())
-            }
             Command::Raydium(raydium) => {
                 raydium.run().await?;
                 Ok(())
             }
             Command::Transfer(transfer) => {
                 transfer.run().await?;
-                Ok(())
-            }
-            Command::Blocks(blocks) => {
-                blocks.run().await?;
                 Ok(())
             }
             Command::Print(print) => {
