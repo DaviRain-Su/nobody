@@ -5,7 +5,6 @@ pub mod generator;
 pub mod jupiter_swap;
 pub mod print;
 pub mod raydium;
-pub mod solana_rpc;
 pub mod transfer;
 
 use crate::command::auto::Auto;
