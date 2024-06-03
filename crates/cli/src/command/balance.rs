@@ -22,23 +22,21 @@ impl Balance {
         })?;
         let rpc_client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
         let balance = rpc_client.get_balance(&payer.pubkey()).await?;
-        let sol_balance = Sol(balance);
-        log::info!("地址 {} 有 {} SOL", payer.pubkey(), sol_balance);
+        log::info!("地址 {} 有 {} SOL", payer.pubkey(), Sol(balance));
         println!(
             "地址 {} 有 {} SOL",
             payer.pubkey().to_string().red(),
-            sol_balance
+            Sol(balance)
         );
 
         let keypairs = get_all_keypairs(&self.file_name)?;
         for keypair in keypairs.keypairs {
             let balance = rpc_client.get_balance(&keypair.pubkey()).await?;
-            let sol_balance = Sol(balance);
-            log::info!("地址 {} 有 {} SOL", keypair.pubkey(), sol_balance);
+            log::info!("地址 {} 有 {} SOL", keypair.pubkey(), Sol(balance));
             println!(
                 "地址 {} 有 {} SOL",
                 keypair.pubkey().to_string().red(),
-                sol_balance
+                Sol(balance)
             );
         }
         Ok(())

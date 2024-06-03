@@ -3,7 +3,7 @@ use crate::utils::{get_all_keypairs, get_config};
 use colored::*;
 use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_client::rpc_config::RpcSendTransactionConfig;
-use solana_sdk::native_token::{lamports_to_sol, sol_to_lamports, Sol};
+use solana_sdk::native_token::{sol_to_lamports, Sol};
 use solana_sdk::signature::Signer;
 use solana_sdk::system_transaction;
 use structopt::StructOpt;
@@ -30,8 +30,7 @@ impl Transfer {
         })?;
         let rpc_client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
         let balance = rpc_client.get_balance(&payer.pubkey()).await?;
-        let sol_balance = Sol(balance);
-        log::info!("{} Balance: {}", payer.pubkey(), sol_balance);
+        log::info!("{} Balance: {}", payer.pubkey(), Sol(balance));
         println!(
             "{} Balance: {}",
             payer.pubkey().to_string().red(),
@@ -50,11 +49,10 @@ impl Transfer {
                 );
                 // Transfer lamports from Alice to Bob
                 let latest_blockhash = rpc_client.get_latest_blockhash().await?;
-                let lamports = sol_to_lamports(self.amount);
                 let tx = system_transaction::transfer(
                     &payer,
                     &keypair.pubkey(),
-                    lamports as u64,
+                    sol_to_lamports(self.amount),
                     latest_blockhash,
                 );
                 let config = RpcSendTransactionConfig {
@@ -81,11 +79,10 @@ impl Transfer {
                 );
                 // Transfer lamports from Alice to Bob
                 let latest_blockhash = rpc_client.get_latest_blockhash().await?;
-                let lamports = sol_to_lamports(self.amount);
                 let tx = system_transaction::transfer(
                     &keypair,
                     &payer.pubkey(),
-                    lamports as u64,
+                    sol_to_lamports(self.amount),
                     latest_blockhash,
                 );
                 let config = RpcSendTransactionConfig {
@@ -100,7 +97,7 @@ impl Transfer {
                         "🎉🎉 {} --> {} ({} SOL) : Signature({})🎉🎉",
                         payer.pubkey(),
                         keypair.pubkey(),
-                        lamports_to_sol(lamports),
+                        self.amount,
                         signature
                     );
                 } else {
@@ -108,7 +105,7 @@ impl Transfer {
                         "😭😭 {} --> {} ({} SOL) : Signature({})😭😭",
                         payer.pubkey(),
                         keypair.pubkey(),
-                        lamports_to_sol(lamports),
+                        self.amount,
                         "Transfer failed".red()
                     );
                 }
