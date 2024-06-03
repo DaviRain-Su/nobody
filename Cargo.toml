@@ -6,5 +6,13 @@ resolver = "2"
 edition = "2021"
 
 [workspace.dependencies]
-solana-sdk = "1.14.23"
-solana-client = "1.14.23"
+solana-sdk = "1.18.4"
+solana-client = "1.18.4"
+solana-account-decoder = "1.18.4"
+solana-transaction-status = "1.18.4"
+solana-cli-config = "1.18.4"
+spl-token = { version = "4.0.0", features = ["no-entrypoint"] }
+spl-associated-token-account = { version = "2.2.0", features = [
+    "no-entrypoint",
+] }
+spl-token-2022 = { version = "0.9.0", features = ["no-entrypoint"] }
