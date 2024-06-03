@@ -7,10 +7,10 @@ use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
 pub struct Generator {
-    /// generator wallet numbers
+    /// 生成钱包地址的数量
     #[structopt(short, long)]
     pub wallet_num: usize,
-    /// keypair file name
+    /// 生成存放地址私钥文件的名字
     #[structopt(short, long)]
     pub file_name: String,
 }

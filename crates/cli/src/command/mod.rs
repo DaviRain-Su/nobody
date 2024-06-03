@@ -14,7 +14,7 @@ use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
 pub enum Command {
-    /// auto generate config.toml file to ~/.config/nobody/config.toml
+    /// 生成默认的配置文件 config.toml 在 ~/.config/nobody/config.toml
     #[structopt(name = "auto")]
     Auto(Auto),
     /// 获取账户的余额
@@ -26,16 +26,10 @@ pub enum Command {
     /// 生成新的Solana Keypair
     #[structopt(name = "generator")]
     Generator(Generator),
-    /// clone token list csv
-    #[structopt(name = "clone")]
-    Clone(clone::Clone),
-    /// raydium
-    #[structopt(name = "raydium")]
-    Raydium(raydium::Raydium),
-    /// transfer
+    /// 支持一对多，多对一 Sol 代币转移
     #[structopt(name = "transfer")]
     Transfer(transfer::Transfer),
-    /// display config: Commitment, Keypair sercret key, RpcEndpoint
+    /// 打印账户的Pubkey和Private Key
     #[structopt(name = "print")]
     Print(print::Print),
 }
@@ -65,14 +59,6 @@ impl NobodyCli {
             }
             Command::Generator(generator) => {
                 generator.run()?;
-                Ok(())
-            }
-            Command::Clone(clone) => {
-                clone.run().await?;
-                Ok(())
-            }
-            Command::Raydium(raydium) => {
-                raydium.run().await?;
                 Ok(())
             }
             Command::Transfer(transfer) => {

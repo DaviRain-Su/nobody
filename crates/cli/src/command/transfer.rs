@@ -10,13 +10,13 @@ use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
 pub struct Transfer {
-    /// keypair file name
+    /// 私钥文件的名字
     #[structopt(long)]
     pub file_name: String,
-    /// is one to more
+    /// 一对多，或者多对一开关
     #[structopt(long)]
     pub is_one_to_more: bool,
-    /// transfer amount
+    /// 转移sol的数量
     #[structopt(long)]
     pub amount: f64,
 }

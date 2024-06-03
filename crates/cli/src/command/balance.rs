@@ -8,7 +8,7 @@ use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
 pub struct Balance {
-    /// keypair file name
+    /// 私钥文件的名字
     #[structopt(short, long)]
     pub file_name: String,
 }

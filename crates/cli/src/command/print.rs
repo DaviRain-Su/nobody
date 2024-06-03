@@ -5,7 +5,7 @@ use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
 pub struct Print {
-    /// file name
+    /// 打印私钥文件的名字，如果不提供仅打印solana默认配置文件的账户的信息
     #[structopt(long)]
     pub file_name: Option<String>,
 }
