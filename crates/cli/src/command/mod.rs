@@ -17,16 +17,16 @@ use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
 pub enum Command {
-    /// auto generate config.toml file to ~/.config/pomm/config.toml
+    /// auto generate config.toml file to ~/.config/nobody/config.toml
     #[structopt(name = "auto")]
     Auto(Auto),
-    /// get balance
+    /// 获取账户的余额
     #[structopt(name = "balance")]
     Balance(balance::Balance),
-    /// jupyter swap
+    /// 使用jupyter 进行swap
     #[structopt(name = "jupyter")]
     Jupyter(Jupyter),
-    /// generate new keypair
+    /// 生成新的Solana Keypair
     #[structopt(name = "generator")]
     Generator(Generator),
     /// clone token list csv
