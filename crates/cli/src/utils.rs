@@ -27,9 +27,3 @@ pub fn get_all_keypairs(file_name: &str) -> Result<KeyPairs, Error> {
     let keypairs = KeyPairs::from(keypairs_str);
     Ok(keypairs)
 }
-
-#[test]
-fn test_get_all_keypars() {
-    // let keypairs = get_all_keypairs();
-    // assert!(keypairs.is_ok())
-}

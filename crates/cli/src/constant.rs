@@ -1,5 +1,3 @@
-pub const LAMPORT: u64 = 1_000_000_000;
-
 pub const DEFAULT_CONFIG_FILE: &str = r#"
 # Optionally include your keypair path. Defaults to your Solana CLI config file.
 keypair_path = "~/.config/solana/id.json"

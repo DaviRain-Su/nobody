@@ -1,8 +1,8 @@
-use crate::constant::LAMPORT;
 use crate::errors::Error;
 use crate::utils::{get_all_keypairs, get_config};
 use colored::*;
 use solana_client::nonblocking::rpc_client::RpcClient;
+use solana_sdk::native_token::Sol;
 use solana_sdk::signature::Signer;
 use structopt::StructOpt;
 
@@ -22,29 +22,23 @@ impl Balance {
         })?;
         let rpc_client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
         let balance = rpc_client.get_balance(&payer.pubkey()).await?;
-        log::info!(
-            "{} Balance: {} SOL",
-            payer.pubkey(),
-            balance as f64 / LAMPORT as f64
-        );
+        let sol_balance = Sol(balance);
+        log::info!("地址 {} 有 {} SOL", payer.pubkey(), sol_balance);
         println!(
-            "{} Balance: {} SOL",
+            "地址 {} 有 {} SOL",
             payer.pubkey().to_string().red(),
-            balance as f64 / LAMPORT as f64
+            sol_balance
         );
 
         let keypairs = get_all_keypairs(&self.file_name)?;
         for keypair in keypairs.keypairs {
             let balance = rpc_client.get_balance(&keypair.pubkey()).await?;
-            log::info!(
-                "{} Balance: {} SOl",
-                keypair.pubkey(),
-                balance as f64 / LAMPORT as f64
-            );
+            let sol_balance = Sol(balance);
+            log::info!("地址 {} 有 {} SOL", keypair.pubkey(), sol_balance);
             println!(
-                "{} Balance: {} SOL",
+                "地址 {} 有 {} SOL",
                 keypair.pubkey().to_string().red(),
-                balance as f64 / LAMPORT as f64
+                sol_balance
             );
         }
         Ok(())
