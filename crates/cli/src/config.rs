@@ -21,7 +21,7 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn read_global_config(&self) -> anyhow::Result<(CommitmentConfig, Keypair, String)> {
+    pub fn read_global_config(&self) -> Result<(CommitmentConfig, Keypair, String), Error> {
         let (commitment, keypair_path, rpc_enpoint) =
             if let (Some(commitment), Some(keypair_path), Some(rpc_endpoint)) = (
                 self.commitment.clone(),
