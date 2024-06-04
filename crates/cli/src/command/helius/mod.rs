@@ -86,6 +86,7 @@ impl NobodyHelius {
         let helius: Helius = Helius::new(api_key, cluster).unwrap();
 
         let request: Vec<ParseTransactionsRequest> = ParseTransactionsRequest::from_slice(&all_txs);
+        let mut counter = 0;
         for req in request {
             let response: Vec<EnhancedTransaction> = helius
                 .parse_transactions(req)
@@ -93,7 +94,17 @@ impl NobodyHelius {
                 .into_iter()
                 .filter(|v| !v.description.is_empty()) // filter description is empty
                 .filter(|v| !v.description.contains("nft")) // filter nft tx
+                //.filter(|v| !v.description.contains("mint")) // filter mint tx
+                .filter(|v| !v.description.contains("multiple")) // filter contain multiple tx
+                .filter(|v| {
+                    !v.description.contains("0.000000001 SOL")
+                        && !v.description.contains("0 SOL")
+                        && !v.description.contains("0.0001")
+                }) // filet contain 0.000000001 SOL tx
+                // .filter(|v| v.events.swap)
                 .collect();
+
+            counter += response.len();
 
             for (_idx, tx) in response.iter().enumerate() {
                 let dt = DateTime::<Utc>::from_utc(
@@ -101,9 +112,10 @@ impl NobodyHelius {
                     Utc,
                 );
                 let local_dt = dt.with_timezone(&Local);
-                println!("Time({}) ⌚️ {:?}", local_dt, tx.description);
+                println!("🌟{} 🌟🌟🌟 {}", local_dt, tx.description);
             }
         }
+        println!("total have {} tx", counter);
         Ok(())
     }
 }
