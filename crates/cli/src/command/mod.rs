@@ -2,7 +2,6 @@ pub mod auto;
 pub mod balance;
 pub mod clone;
 pub mod generator;
-pub mod helius;
 pub mod jupiter_swap;
 pub mod print;
 pub mod raydium;
@@ -33,8 +32,6 @@ pub enum Command {
     /// 打印账户的Pubkey和Private Key
     #[structopt(name = "print")]
     Print(print::Print),
-    #[structopt(name = "helius")]
-    NobodyHelius(helius::NobodyHelius),
 }
 
 #[derive(Debug, StructOpt)]
@@ -53,7 +50,6 @@ impl NobodyCli {
             Command::Generator(generator) => generator.run(),
             Command::Transfer(transfer) => transfer.run().await,
             Command::Print(print) => print.run().await,
-            Command::NobodyHelius(hs) => hs.run().await,
         }
     }
 }
