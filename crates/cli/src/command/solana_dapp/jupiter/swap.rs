@@ -1,5 +1,5 @@
-use crate::command::jupiter_swap::token_list::TokenListType;
-use crate::command::jupiter_swap::token_list::Tokens;
+use super::token_list::TokenListType;
+use super::token_list::Tokens;
 use crate::errors::Error;
 use crate::utils::get_config;
 use jupiter_swap_api_client::{
@@ -7,19 +7,17 @@ use jupiter_swap_api_client::{
     JupiterSwapApiClient,
 };
 use solana_client::nonblocking::rpc_client::RpcClient;
-use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signer::Signer;
 use solana_sdk::transaction::VersionedTransaction;
 use std::env;
-use std::str::FromStr;
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
-pub struct JupyterSwapByPubkey {
+pub struct JupyterSwap {
     /// input token name want to swap
-    pub input_token_address: String,
+    pub input_token_name: String,
     /// output token name want to swap
-    pub output_token_address: String,
+    pub output_token_name: String,
     /// input token amount
     pub input_amount: f64,
     /// slippage bps
@@ -27,7 +25,7 @@ pub struct JupyterSwapByPubkey {
     pub slippage_bps: u16,
 }
 
-impl JupyterSwapByPubkey {
+impl JupyterSwap {
     pub async fn run(&self) -> anyhow::Result<()> {
         let config = get_config().map_err(|e| Error::from(e.to_string()))?;
         let (commitment, payer, rpc_enpoint) = config.read_global_config().map_err(|e| {
@@ -36,53 +34,29 @@ impl JupyterSwapByPubkey {
         })?;
         let tokens = get_token_lists().map_err(|e| Error::from(e.to_string()))?;
         log::info!("tokens Len: {}", tokens.len());
-        // send with rpc client...
         let rpc_client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
 
-        // need pre swap CHEK token address have.
-        let Ok(input_token) = Pubkey::from_str(&self.input_token_address) else {
-            panic!(
-                "input_token_address({}) is not valid",
-                self.input_token_address
-            );
-        };
-        let input_token_name = tokens.name(&input_token).unwrap_or(input_token.to_string());
-        let input_token_ata = spl_associated_token_account::get_associated_token_address(
-            &payer.pubkey(),
-            &input_token,
-        );
-        let input_token_balance = rpc_client
-            .get_token_account_balance(&input_token_ata)
-            .await
-            .map_err(|e| {
-                let location = std::panic::Location::caller();
-                Error::from(format!("Error({}): {})", location, e.to_string()))
-            })?;
-        println!(
-            "Token({}) Address({}) Decimals({})",
-            input_token_name, input_token, input_token_balance.decimals
-        );
-        println!(
-            "Address({}) have {} {}💰",
-            payer.pubkey(),
-            input_token_name,
-            input_token_balance.amount.parse::<f64>().map_err(|e| {
-                let location = std::panic::Location::caller();
-                Error::from(format!("Error({}): {})", location, e.to_string()))
-            })? / 10f64.powi(input_token_balance.decimals as i32)
+        let input_token = tokens.address(&self.input_token_name).map_err(|e| {
+            let location = std::panic::Location::caller();
+            Error::from(format!("Error({}): {})", location, e.to_string()))
+        })?;
+        let input_token_decimals = tokens.decimals(&self.input_token_name).map_err(|e| {
+            let location = std::panic::Location::caller();
+            Error::from(format!("Error({}): {})", location, e.to_string()))
+        })?;
+
+        let output_token = tokens.address(&self.output_token_name).map_err(|e| {
+            let location = std::panic::Location::caller();
+            Error::from(format!("Error({}): {})", location, e.to_string()))
+        })?;
+        log::info!(
+            "Token({}) Address({})",
+            self.output_token_name,
+            output_token
         );
 
-        let Ok(output_token) = Pubkey::from_str(&self.output_token_address) else {
-            panic!(
-                "input_token_address({}) is not valid",
-                self.input_token_address
-            );
-        };
-
-        let input_amount =
-            (self.input_amount * 10f64.powi(input_token_balance.decimals as i32)) as u64;
+        let input_amount = (self.input_amount * 10f64.powi(input_token_decimals as i32)) as u64;
         let api_base_url = env::var("API_BASE_URL").unwrap_or("https://quote-api.jup.ag/v6".into());
-        log::info!("Using base url: {}", api_base_url);
 
         let jupiter_swap_api_client = JupiterSwapApiClient::new(api_base_url);
 
@@ -93,11 +67,11 @@ impl JupyterSwapByPubkey {
             slippage_bps: self.slippage_bps,
             ..QuoteRequest::default()
         };
-        log::info!("{:#?}", quote_request);
+        log::debug!("{:#?}", quote_request);
 
         // GET /quote
         let quote_response = jupiter_swap_api_client.quote(&quote_request).await.unwrap();
-        log::info!("{quote_response:#?}");
+        log::debug!("{quote_response:#?}");
 
         // POST /swap
         let swap_response = jupiter_swap_api_client
@@ -119,15 +93,7 @@ impl JupyterSwapByPubkey {
             VersionedTransaction::try_new(versioned_transaction.message, &[&payer]).unwrap();
 
         // This will fail with "Transaction signature verification failure" as we did not really sign
-
         // this why we need to sign the transaction with the wallet
-        // how to resolve
-        // 1. create a wallet
-        // 2. fund the wallet
-        // 3. sign the transaction with the wallet
-        // 4. send the transaction
-        // 5. check the balance
-        // 6. check the transaction history
         let signature = rpc_client
             .send_and_confirm_transaction(&signed_versioned_transaction)
             .await;
@@ -149,7 +115,7 @@ impl JupyterSwapByPubkey {
             })?;
         println!(
             "Token({}) Address({}) Decimals({})",
-            output_token_name, input_token, output_token_balance.decimals
+            output_token_name, output_token, output_token_balance.decimals
         );
         println!(
             "Address({}) have {} {}💰",
