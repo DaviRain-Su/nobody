@@ -18,8 +18,8 @@ pub enum Command {
     /// 获取账户的余额
     #[structopt(name = "balance")]
     Balance(balance::Balance),
-    /// 使用jupyter 进行swap
-    #[structopt(name = "jupyter")]
+    /// about solana dapp
+    #[structopt(name = "dapp")]
     SolanaDapp(solana_dapp::SolanaDapp),
     /// 生成新的Solana Keypair
     #[structopt(name = "generator")]
