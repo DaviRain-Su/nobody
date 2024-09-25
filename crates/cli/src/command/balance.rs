@@ -21,7 +21,6 @@ impl Balance {
             .map_err(|e| Error::from(format!("Error: {}", e.to_string())))?;
         let rpc_client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
         let balance = rpc_client.get_balance(&payer.pubkey()).await?;
-        log::info!("地址 {} 有 {} Sol", payer.pubkey(), Sol(balance));
         println!(
             "地址 {} 有 {} Sol",
             payer.pubkey().to_string().red(),
@@ -31,7 +30,6 @@ impl Balance {
         let keypairs = get_all_keypairs(&self.file_name)?;
         for keypair in keypairs.keypairs {
             let balance = rpc_client.get_balance(&keypair.pubkey()).await?;
-            log::info!("地址 {} 有 {} Sol", keypair.pubkey(), Sol(balance));
             println!(
                 "地址 {} 有 {} Sol",
                 keypair.pubkey().to_string().red(),

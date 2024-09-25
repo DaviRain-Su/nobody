@@ -34,7 +34,6 @@ impl JupyterSwapByPubkey {
             .read_global_config()
             .map_err(|e| Error::from(format!("Error : {}", e.to_string())))?;
         let tokens = get_token_lists().map_err(|e| Error::from(e.to_string()))?;
-        log::info!("tokens Len: {}", tokens.len());
         // send with rpc client...
         let rpc_client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
 
@@ -78,7 +77,6 @@ impl JupyterSwapByPubkey {
         let input_amount =
             (self.input_amount * 10f64.powi(input_token_balance.decimals as i32)) as u64;
         let api_base_url = env::var("API_BASE_URL").unwrap_or("https://quote-api.jup.ag/v6".into());
-        log::info!("Using base url: {}", api_base_url);
 
         let jupiter_swap_api_client = JupiterSwapApiClient::new(api_base_url);
 
@@ -89,11 +87,9 @@ impl JupyterSwapByPubkey {
             slippage_bps: self.slippage_bps,
             ..QuoteRequest::default()
         };
-        log::info!("{:#?}", quote_request);
 
         // GET /quote
         let quote_response = jupiter_swap_api_client.quote(&quote_request).await.unwrap();
-        log::info!("{quote_response:#?}");
 
         // POST /swap
         let swap_response = jupiter_swap_api_client
@@ -161,9 +157,7 @@ impl JupyterSwapByPubkey {
 pub fn get_token_lists() -> Result<Tokens, Error> {
     let current_dir =
         std::env::current_dir().map_err(|e| Error::from(format!("Error: {}", e.to_string())))?;
-    log::info!("current_dir: {:?}", current_dir);
     let read_file_path = current_dir.join("token_list/solana-fm.csv");
-    log::info!("read_file solana-fm.csv PATH {:?}", read_file_path);
 
     let mut token_list = vec![];
     let mut rdr = csv::Reader::from_path(read_file_path)

@@ -32,7 +32,6 @@ impl JupyterSwap {
             .read_global_config()
             .map_err(|e| Error::from(format!("Error: {})", e.to_string())))?;
         let tokens = get_token_lists().map_err(|e| Error::from(e.to_string()))?;
-        log::info!("tokens Len: {}", tokens.len());
         let rpc_client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
 
         let input_token = tokens
@@ -45,11 +44,6 @@ impl JupyterSwap {
         let output_token = tokens
             .address(&self.output_token_name)
             .map_err(|e| Error::from(format!("Error: {})", e.to_string())))?;
-        log::info!(
-            "Token({}) Address({})",
-            self.output_token_name,
-            output_token
-        );
 
         let input_amount = (self.input_amount * 10f64.powi(input_token_decimals as i32)) as u64;
         let api_base_url = env::var("API_BASE_URL").unwrap_or("https://quote-api.jup.ag/v6".into());
@@ -63,11 +57,9 @@ impl JupyterSwap {
             slippage_bps: self.slippage_bps,
             ..QuoteRequest::default()
         };
-        log::debug!("{:#?}", quote_request);
 
         // GET /quote
         let quote_response = jupiter_swap_api_client.quote(&quote_request).await.unwrap();
-        log::debug!("{quote_response:#?}");
 
         // POST /swap
         let swap_response = jupiter_swap_api_client
@@ -78,8 +70,6 @@ impl JupyterSwap {
             })
             .await
             .unwrap();
-
-        log::info!("Raw tx len: {}", swap_response.swap_transaction.len());
 
         let versioned_transaction: VersionedTransaction =
             bincode::deserialize(&swap_response.swap_transaction).unwrap();

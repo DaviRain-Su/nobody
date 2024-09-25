@@ -29,7 +29,7 @@ impl Transfer {
             .map_err(|e| Error::from(format!("Error: {}", e.to_string())))?;
         let rpc_client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
         let balance = rpc_client.get_balance(&payer.pubkey()).await?;
-        log::info!("账户 {} 有 {} Sol", payer.pubkey(), Sol(balance));
+
         println!(
             "账户 {} 有 {} Sol",
             payer.pubkey().to_string().red(),
@@ -40,7 +40,7 @@ impl Transfer {
         if self.is_one_to_more {
             for keypair in keypairs.keypairs {
                 let balance = rpc_client.get_balance(&keypair.pubkey()).await?;
-                log::info!("账户 {} 有 {} Sol", keypair.pubkey(), Sol(balance));
+
                 println!(
                     "账户 {} 有 {} Sol",
                     keypair.pubkey().to_string().red(),
@@ -70,7 +70,7 @@ impl Transfer {
         } else {
             for keypair in keypairs.keypairs {
                 let balance = rpc_client.get_balance(&keypair.pubkey()).await?;
-                log::info!("账户 {} 有 {} Sol", keypair.pubkey(), Sol(balance));
+
                 println!(
                     "账户 {} 有 {} Sol",
                     keypair.pubkey().to_string().red(),

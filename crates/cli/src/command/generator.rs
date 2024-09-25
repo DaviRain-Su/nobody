@@ -22,14 +22,6 @@ impl Generator {
                 .map(|_i| Keypair::new())
                 .collect::<Vec<Keypair>>(),
         );
-        log::info!(
-            "keypairs: {:?}",
-            keypairs
-                .keypairs
-                .iter()
-                .map(|k| k.pubkey())
-                .collect::<Vec<_>>()
-        );
 
         let keypairs_str = KeyPairsString::from(keypairs);
 
