@@ -30,10 +30,9 @@ pub struct JupyterSwapByPubkey {
 impl JupyterSwapByPubkey {
     pub async fn run(&self) -> anyhow::Result<()> {
         let config = get_config().map_err(|e| Error::from(e.to_string()))?;
-        let (commitment, payer, rpc_enpoint) = config.read_global_config().map_err(|e| {
-            let location = std::panic::Location::caller();
-            Error::from(format!("Error({}): {})", location, e.to_string()))
-        })?;
+        let (commitment, payer, rpc_enpoint) = config
+            .read_global_config()
+            .map_err(|e| Error::from(format!("Error : {}", e.to_string())))?;
         let tokens = get_token_lists().map_err(|e| Error::from(e.to_string()))?;
         log::info!("tokens Len: {}", tokens.len());
         // send with rpc client...
@@ -54,10 +53,7 @@ impl JupyterSwapByPubkey {
         let input_token_balance = rpc_client
             .get_token_account_balance(&input_token_ata)
             .await
-            .map_err(|e| {
-                let location = std::panic::Location::caller();
-                Error::from(format!("Error({}): {})", location, e.to_string()))
-            })?;
+            .map_err(|e| Error::from(format!("Error: {}", e.to_string())))?;
         println!(
             "Token({}) Address({}) Decimals({})",
             input_token_name, input_token, input_token_balance.decimals
@@ -143,10 +139,7 @@ impl JupyterSwapByPubkey {
         let output_token_balance = rpc_client
             .get_token_account_balance(&output_token_ata)
             .await
-            .map_err(|e| {
-                let location = std::panic::Location::caller();
-                Error::from(format!("Error({}): {})", location, e.to_string()))
-            })?;
+            .map_err(|e| Error::from(format!("Error: {}", e.to_string())))?;
         println!(
             "Token({}) Address({}) Decimals({})",
             output_token_name, input_token, output_token_balance.decimals
@@ -166,26 +159,20 @@ impl JupyterSwapByPubkey {
 }
 
 pub fn get_token_lists() -> Result<Tokens, Error> {
-    let current_dir = std::env::current_dir().map_err(|e| {
-        let location = std::panic::Location::caller();
-        Error::from(format!("Error({}): {})", location, e.to_string()))
-    })?;
+    let current_dir =
+        std::env::current_dir().map_err(|e| Error::from(format!("Error: {}", e.to_string())))?;
     log::info!("current_dir: {:?}", current_dir);
     let read_file_path = current_dir.join("token_list/solana-fm.csv");
     log::info!("read_file solana-fm.csv PATH {:?}", read_file_path);
 
     let mut token_list = vec![];
-    let mut rdr = csv::Reader::from_path(read_file_path).map_err(|e| {
-        let location = std::panic::Location::caller();
-        Error::from(format!("Error({}): {})", location, e.to_string()))
-    })?;
+    let mut rdr = csv::Reader::from_path(read_file_path)
+        .map_err(|e| Error::from(format!("Error : {}", e.to_string())))?;
     for result in rdr.deserialize() {
         // Notice that we need to provide a type hint for automatic
         // deserialization.
-        let record: TokenListType = result.map_err(|e| {
-            let location = std::panic::Location::caller();
-            Error::from(format!("Error({}): {})", location, e.to_string()))
-        })?;
+        let record: TokenListType =
+            result.map_err(|e| Error::from(format!("Error: {}", e.to_string())))?;
         token_list.push(record);
     }
     let tokens = token_list

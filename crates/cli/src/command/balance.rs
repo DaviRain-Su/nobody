@@ -16,10 +16,9 @@ pub struct Balance {
 impl Balance {
     pub async fn run(&self) -> anyhow::Result<()> {
         let config = get_config().map_err(|e| Error::from(e.to_string()))?;
-        let (commitment, payer, rpc_enpoint) = config.read_global_config().map_err(|e| {
-            let location = std::panic::Location::caller();
-            Error::from(format!("Error({}): {})", location, e.to_string()))
-        })?;
+        let (commitment, payer, rpc_enpoint) = config
+            .read_global_config()
+            .map_err(|e| Error::from(format!("Error: {}", e.to_string())))?;
         let rpc_client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
         let balance = rpc_client.get_balance(&payer.pubkey()).await?;
         log::info!("地址 {} 有 {} Sol", payer.pubkey(), Sol(balance));

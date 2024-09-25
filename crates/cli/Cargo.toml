@@ -37,8 +37,6 @@ csv = "1.3.0"
 ## Solana
 # jupiter
 jupiter-swap-api-client = "0.1.0"
-# helius
-helius = "0.1.5"
 # solana crate
 solana-account-decoder = { workspace = true }
 solana-transaction-status = { workspace = true }

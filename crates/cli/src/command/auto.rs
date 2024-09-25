@@ -34,13 +34,13 @@ impl Auto {
                 ))
             })?;
             let keypairs_path = nobody_config_path.join("keypairs.json");
-            std::fs::write(keypairs_path.clone(), "").map_err(|e| {
+            std::fs::write(keypairs_path, "").map_err(|e| {
                 Error::from(format!(
                     "failed write keypairs_path: Error({})",
                     e.to_string()
                 ))
             })?;
-            let config_str = std::fs::read_to_string(config_path.clone()).map_err(|e| {
+            let config_str = std::fs::read_to_string(config_path).map_err(|e| {
                 Error::from(format!(
                     "failed read config file from path: Error({})",
                     e.to_string()
