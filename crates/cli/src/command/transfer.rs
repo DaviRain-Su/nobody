@@ -13,7 +13,7 @@ pub struct Transfer {
     /// 私钥文件的名字
     #[structopt(long)]
     pub file_name: String,
-    /// 一对多，或者多对一开关
+    /// 一对多，或者多对一开关 默认是多对一
     #[structopt(long)]
     pub is_one_to_more: bool,
     /// 转移sol的数量

@@ -123,32 +123,38 @@ impl JupyterSwapByPubkey {
         let signature = rpc_client
             .send_and_confirm_transaction(&signed_versioned_transaction)
             .await;
-        println!("🎉🎉🎉🎉{signature:?}🎉🎉🎉");
-
-        let output_token_name = tokens
-            .name(&output_token)
-            .unwrap_or(output_token.to_string());
-        let output_token_ata = spl_associated_token_account::get_associated_token_address(
-            &payer.pubkey(),
-            &output_token,
-        );
-        let output_token_balance = rpc_client
-            .get_token_account_balance(&output_token_ata)
-            .await
-            .map_err(|e| Error::from(format!("Error: {}", e.to_string())))?;
-        println!(
-            "Token({}) Address({}) Decimals({})",
-            output_token_name, input_token, output_token_balance.decimals
-        );
-        println!(
-            "Address({}) have {} {}💰",
-            payer.pubkey(),
-            output_token_name,
-            output_token_balance.amount.parse::<f64>().map_err(|e| {
-                let location = std::panic::Location::caller();
-                Error::from(format!("Error({}): {})", location, e.to_string()))
-            })? / 10f64.powi(output_token_balance.decimals as i32)
-        );
+        match signature {
+            Ok(signature) => {
+                println!("🎉🎉🎉🎉Signature: {:?}🎉🎉🎉", signature);
+                let output_token_name = tokens
+                    .name(&output_token)
+                    .unwrap_or(output_token.to_string());
+                let output_token_ata = spl_associated_token_account::get_associated_token_address(
+                    &payer.pubkey(),
+                    &output_token,
+                );
+                let output_token_balance = rpc_client
+                    .get_token_account_balance(&output_token_ata)
+                    .await
+                    .map_err(|e| Error::from(format!("Error: {}", e.to_string())))?;
+                println!(
+                    "Token({}) Address({}) Decimals({})",
+                    output_token_name, input_token, output_token_balance.decimals
+                );
+                println!(
+                    "Address({}) have {} {}💰",
+                    payer.pubkey(),
+                    output_token_name,
+                    output_token_balance.amount.parse::<f64>().map_err(|e| {
+                        let location = std::panic::Location::caller();
+                        Error::from(format!("Error({}): {})", location, e.to_string()))
+                    })? / 10f64.powi(output_token_balance.decimals as i32)
+                );
+            }
+            Err(e) => {
+                println!("❌❌❌❌❌❌❌ : {:?}", e);
+            }
+        }
 
         Ok(())
     }
