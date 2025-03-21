@@ -23,7 +23,7 @@ pub struct JupyterSwapByPubkey {
     /// input token amount
     pub input_amount: f64,
     /// slippage bps
-    #[structopt(long, default_value = "50")]
+    #[structopt(long, default_value = "100")]
     pub slippage_bps: u16,
 }
 

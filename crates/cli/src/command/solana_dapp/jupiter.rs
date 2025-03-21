@@ -1,5 +1,6 @@
 use structopt::StructOpt;
 
+pub mod dca_swap;
 pub mod swap;
 pub mod swap_by_pubkey;
 pub mod token_list;
